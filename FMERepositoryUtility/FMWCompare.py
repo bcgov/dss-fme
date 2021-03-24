@@ -1,5 +1,10 @@
 import json
+<<<<<<< HEAD:FMWCompare.py
 from ApiException import APIException
+=======
+from FMEAPI.ApiException import APIException
+from FMERepositoryUtility.ObjectCompare import ObjectCompare
+>>>>>>> ac39cf9... 1. added test code. 2. created packages:FMERepositoryUtility/FMWCompare.py
 
 
 class FMWCompare:
