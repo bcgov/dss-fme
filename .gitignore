@@ -1,0 +1,6 @@
+*.pyc
+lib/
+.idea/
+/secret.json
+log.txt
+__pycache__/
