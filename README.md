@@ -12,7 +12,7 @@ secret.json:
 {
   "account": [
     {
-      "user": "DBCUSER3",
+      "user": "username",
       "password": "********",
       "domain": "IDIR"
     }
