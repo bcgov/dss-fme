@@ -7,3 +7,14 @@
   4. close(), with try-finlly
   
 Created and tested on Python 3.9 
+
+secret.json:
+{
+  "account": [
+    {
+      "user": "DBCUSER3",
+      "password": "********",
+      "domain": "IDIR"
+    }
+  ]
+}
