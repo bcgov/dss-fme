@@ -1,8 +1,5 @@
-# FMERepoTran
-Development utility tool to transfer Repositories between FME Servers.
-
-app.jon
-  const definetion for the application.
+# FMEServerLib
+Development utility tool for FME Servers.
   
 CallAPI.py
   The interal Python class calls FME Server API using request.
