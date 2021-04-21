@@ -86,13 +86,15 @@ class FmeApis:
 
     def list_fmw_parameters(self, repo_name, fmw_name):
         """Retrieves the published parameters of a workspace."""
-        parameters_list = self.create_api_caller().call_api("list_fmw_parameters", [repo_name, fmw_name])
-        return parameters_list
+        return_obj = self.create_api_caller().call_api("list_fmw_parameters", [repo_name, fmw_name])
+        items = return_obj["text"]
+        return items
 
     def get_fmw_parameters_pub_info(self, repo_name, fmw_name, pub_name):
         """Retrieves a published parameter of a workspace."""
-        pub_info = self.create_api_caller().call_api("get_fmw_parameters_pub_info", [repo_name, fmw_name, pub_name])
-        return pub_info
+        return_obj = self.create_api_caller().call_api("get_fmw_parameters_pub_info", [repo_name, fmw_name, pub_name])
+        items = return_obj["text"]
+        return items
 
     def list_fmw_resources(self, repo_name, fmw_name):
         """Returns a list of resources associated with to a repository item."""
