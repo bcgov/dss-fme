@@ -1,0 +1,17 @@
+{
+  "fme_server": "gienah.dmz",
+  "server_console": "\"C:\\Work\\TeamSource\\DSS\\FMEFramework\\FME Server\\FMEServerConsole\\fmeserverconsole.exe\"",
+  "source_fmw": "fmw.txt",
+  "dest_fmw": "result%s.txt",
+  "run_status": "RunStatus.txt",
+  "filter_props": [
+    {
+      "DEST_SCHEMA": {}
+    },
+    {
+      "DEST_DB_ENV_KEY": {
+        "defaultValue": "DLV"
+      }
+    }
+  ]
+}
