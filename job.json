@@ -1,9 +1,13 @@
 {
   "fme_server": "gienah.dmz",
   "server_console": "\"C:\\Work\\TeamSource\\DSS\\FMEFramework\\FME Server\\FMEServerConsole\\fmeserverconsole.exe\"",
-  "source_fmw": "fmw.txt",
+  "source_fmw": "..\\FMWRunSpace\\fmw.txt",
   "dest_fmw": "result%s.txt",
   "run_status": "RunStatus.txt",
+  "lock_flag": "..\\FMWRunSpace\\lock.txt",
+  "filter_fmw": [
+    "^gsr_"
+  ],
   "filter_props": [
     {
       "DEST_SCHEMA": {}

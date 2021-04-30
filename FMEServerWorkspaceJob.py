@@ -1,7 +1,10 @@
 import json
 import sys
+import os
 import time
 import math
+
+from FMERepositoryUtility.FMWRepositoryUtil import FMWRepositoryUtil
 
 sys.path.append('../FMEServerLib')
 from FMERepositoryUtility import FMWParameterUtil
@@ -19,31 +22,17 @@ class FMEServerWorkspaceJob:
             self.secret_config = json.load(secret_config_json)
         self.log = log
         self.server_console = self.job_config["server_console"]
+        self.cmd = RunProcess.RunProcess()
 
-    def pass_filter(self, param_util):
-        for param in self.job_config["filter_props"]:
-            key = list(param.keys())[0]
-            try:
-                value = param_util.get_parameter(key)
-            except:
-                return False
-            if not value:
-                return False
-            for prop in param[key]:
-                if prop not in value.keys():
-                    return False
-                if value[prop] != param[key][prop]:
-                    return False
-        return True
+    def pass_filter_fmw(self, repo, fmw):
+        repo_util = FMWRepositoryUtil(repo, fmw)
+        return repo_util.filter_fmw(self.job_config["filter_fmw"])
 
-    def can_run_workspace(self, workspace):
-        strs = workspace.split("/")
-        if len(strs) < 2:
-            return False
-        param_util = FMWParameterUtil.FMWParameterUtil(strs[0].strip(), strs[1].strip(),
+    def pass_filter_param(self, repo, fmw):
+        param_util = FMWParameterUtil.FMWParameterUtil(repo, fmw,
                                                        self.job_config["fme_server"],
                                                        self.secret_config["token"])
-        return self.pass_filter(param_util)
+        return param_util.filter_parameter(self.job_config["filter_props"])
 
     @staticmethod
     def parse_result(text):
@@ -98,42 +87,90 @@ class FMEServerWorkspaceJob:
             f.write("\n")
         f.close()
 
-    def filter_can_run(self, fmws):
-        chg = False
-        for fmw in fmws:
-            if fmw["done"]:
-                continue
-            if not self.can_run_workspace(fmw["name"]):
-                fmw["done"] = False
-                chg = True
-        if chg:
-            self.write_result(fmws)
+    def pass_filter(self, repo, fmw):
+        return self.pass_filter_fmw(repo, fmw) and self.pass_filter_param(repo, fmw)
 
-    def run_workspace(self):
-        cmd = RunProcess.RunProcess()
+    def do_select_fmw(self):
         f = open(self.job_config["source_fmw"], "r")
         lines = f.readlines()
         f.close()
-        fmws = self.translate(lines)
-        if not fmws or len(fmws) == 0:
-            return
-        # self.filter_can_run(fmws)
-        for fmw0 in fmws:
-            if fmw0["done"] is not None:
+        for line in lines:
+            try:
+                fmw = json.loads(line)
+                if fmw["done"] is not None:
+                    continue
+                strs = fmw["name"].split("/")
+                if len(strs) < 2:
+                    continue
+                if not self.pass_filter(strs[0].strip(), strs[1].strip()):
+                    continue
+                return fmw
+            except:
                 continue
-            fmw = fmw0["name"]
+        return None
+
+    def do_update_fmw(self, fmw):
+        f = open(self.job_config["source_fmw"], "r")
+        lines = f.readlines()
+        f.close()
+        result = list()
+        for line in lines:
+            item = json.loads(line)
+            if item["name"] == fmw["name"]:
+                item["done"] = fmw["done"]
+            result.append(item)
+        f = open(self.job_config["source_fmw"], "w")
+        for r in result:
+            f.write(json.dumps(r))
+            f.write("\n")
+        f.close()
+
+    def lock_action(self, act, fmw):
+        def lock_and_act():
+            f = open(fn, "w")
+            try:
+                f.write("busy")
+                return act(fmw)
+            finally:
+                f.close()
+                os.remove(fn)
+
+        fn = self.job_config["lock_flag"]
+        for i in range(10):
+            if not os.path.exists(fn):
+                return lock_and_act()
+            time.sleep(1)
+        raise Exception("The lock file is locked.")
+
+    def select_fmw(self):
+        def select_fmw_func(fmw):
+            return self.do_select_fmw()
+
+        return self.lock_action(select_fmw_func, None)
+
+    def update_fmw(self, fmw):
+        def update_fmw_func(fmw2):
+            return self.do_update_fmw(fmw2)
+
+        return self.lock_action(update_fmw_func, fmw)
+
+    def run_workspace(self):
+        while True:
+            fmw = self.select_fmw()
+            if not fmw:
+                break
+            fmw["done"] = "busy"
+            self.update_fmw(fmw)
             self.log.write_line(fmw)
-            # fmw = "BCGW_SCHEDULED / bcgw_last_table_attributes_bcgw_ora_bcgw.fmw"
-            # fmw = "BCGW_SCHEDULED/cbm_intgd_cadastral_fabric_sp_icfprd_sde_idwprod1.fmw"
-            cmd_parameters = "%s %s" % (self.server_console, fmw)
+            cmd_parameters = "%s %s" % (self.server_console, fmw["name"])
             self.log.write_line(cmd_parameters)
-            cmd.run(cmd_parameters)
-            result = self.parse_result(cmd.result)
+            self.cmd.run(cmd_parameters)
+            result = self.parse_result(self.cmd.result)
             if "status" in result.keys() and result["status"] == "SUCCESS":
                 self.log.write_line(result)
-                fmw0["done"] = True
+                fmw["done"] = "true"
             else:
                 self.log.write_line("Failed!")
                 self.log.write_line(result)
-                fmw0["done"] = False
-            self.write_result(fmws)
+                fmw["done"] = "false"
+            self.update_fmw(fmw)
