@@ -7,22 +7,18 @@ from FMEAPI.CallAPIDelete import CallAPIDELETE
 
 
 class FmeApis:
-    CONFIG = "api.json"
 
-    def __init__(self, server, token, log):
+    def __init__(self, server, token):
         self.server = server
         self.token = token
-        self.log = log
-        with open(FmeApis.CONFIG) as api_config_json:
-            self.api_config = json.load(api_config_json)
 
     def create_api_caller(self, method="GET"):
         if method == "GET":
-            return CallAPIGET(self.api_config, self.server, self.token, self.log)
+            return CallAPIGET(self.server, self.token)
         if method == "POST":
-            return CallAPIPOST(self.api_config, self.server, self.token, self.log)
+            return CallAPIPOST(self.server, self.token)
         if method == "DELETE":
-            return CallAPIDELETE(self.api_config, self.server, self.token, self.log)
+            return CallAPIDELETE(self.server, self.token)
 
     def check_health(self):
         """check server if funning good, no token required"""

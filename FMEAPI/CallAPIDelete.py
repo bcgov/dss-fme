@@ -4,8 +4,8 @@ from FMEAPI.CallAPI import CallAPI
 
 class CallAPIDELETE(CallAPI):
 
-    def __init__(self, api_config, server, token, log):
-        super().__init__(api_config, server, token, log)
+    def __init__(self, server, token):
+        super().__init__(server, token)
         self.http_method = "DELETE"
 
     def execute_api(self, url, headers, body):
