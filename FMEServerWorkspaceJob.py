@@ -4,10 +4,9 @@ import os
 import time
 import math
 
-from FMERepositoryUtility.FMWRepositoryUtil import FMWRepositoryUtil
-
 sys.path.append('../FMEServerLib')
 from FMERepositoryUtility import FMWParameterUtil
+from FMERepositoryUtility import FMWRepositoryUtil
 from ProcessUtility import RunProcess
 
 
@@ -25,7 +24,7 @@ class FMEServerWorkspaceJob:
         self.cmd = RunProcess.RunProcess()
 
     def pass_filter_fmw(self, repo, fmw):
-        repo_util = FMWRepositoryUtil(repo, fmw)
+        repo_util = FMWRepositoryUtil.FMWRepositoryUtil(repo, fmw)
         return repo_util.filter_fmw(self.job_config["filter_fmw"])
 
     def pass_filter_param(self, repo, fmw):
@@ -95,18 +94,14 @@ class FMEServerWorkspaceJob:
         lines = f.readlines()
         f.close()
         for line in lines:
-            try:
-                fmw = json.loads(line)
-                if fmw["done"] is not None:
-                    continue
-                strs = fmw["name"].split("/")
-                if len(strs) < 2:
-                    continue
-                if not self.pass_filter(strs[0].strip(), strs[1].strip()):
-                    continue
-                return fmw
-            except:
+            print(line)
+            fmw = json.loads(line)
+            if fmw["done"] is not None:
                 continue
+            strs = fmw["name"].split("/")
+            if not self.pass_filter(strs[0].strip(), strs[1].strip()):
+                continue
+            return fmw
         return None
 
     def do_update_fmw(self, fmw):
