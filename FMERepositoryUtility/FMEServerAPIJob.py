@@ -1,16 +1,20 @@
+import json
 import os
+from pathlib import Path
 
 from FMEAPI import FMEAPI
 from FMEAPI.ApiException import APIException
-from pathlib import Path
 
 
 class FMEServerAPIJob:
 
-    def __init__(self, job_config, secrect_config, output_dir, log):
-        self.job_config = job_config
-        self.job = FMEAPI.FmeApis(job_config["fme_server"], secrect_config["token"], log)
-        self.output_dir = output_dir
+    def __init__(self, secret_config_name, job_config_name):
+        with open(secret_config_name) as secret_config_json:
+            self.secret_config = json.load(secret_config_json)
+        with open(job_config_name) as job_config_json:
+            self.job_config = json.load(job_config_json)
+        self.job = FMEAPI.FmeApis(self.job_config["fme_server"], self.secret_config["token"])
+        self.output_dir = self.job_config["output_dir"]
         ok = self.job.check_health()
         if not ok:
             raise Exception("FME Server is not healthy.")
@@ -19,7 +23,8 @@ class FMEServerAPIJob:
         repo_list = self.job.list_repos()
         return repo_list
 
-    def get_fmw_props(self, api_method, repo_name, fmw_name):
+    @staticmethod
+    def get_fmw_props(api_method, repo_name, fmw_name):
         try:
             return api_method(repo_name, fmw_name)
         except APIException as e:
@@ -35,7 +40,8 @@ class FMEServerAPIJob:
                 fmw["services"] = self.get_fmw_props(self.job.list_fmw_services, repo_name, fmw["name"])
         return fmw_list
 
-    def prop_exists(self, names, get_prop_act):
+    @staticmethod
+    def prop_exists(names, get_prop_act):
         try:
             get_prop_act(*names)
             return True
@@ -43,25 +49,23 @@ class FMEServerAPIJob:
             return False
 
     def repo_exists(self, repo_name):
-        get_prop_func = lambda repo_name: self.job.get_repo_info(repo_name)
-        return self.prop_exists([repo_name], get_prop_func)
+        return self.prop_exists([repo_name], self.job.get_repo_info)
 
     def fmw_exists(self, repo_name, fmw_name):
-        get_prop_func = lambda repo_name, fmw_name: self.job.get_repo_fmw(repo_name, fmw_name)
-        return self.prop_exists([repo_name, fmw_name], get_prop_func)
+        return self.prop_exists([repo_name, fmw_name], self.job.get_repo_fmw)
 
     def get_repo_fmw(self, repo_name, fmw_name):
         fmw = self.job.get_repo_fmw(repo_name, fmw_name)
         return fmw
 
-    def populate_prop_file_name(self, names, dir):
+    def populate_prop_file_name(self, names, out_dir):
         if len(names) == 0:
             return None
         if len(names) == 1:
-            return os.path.join(self.output_dir, dir, names[0])
+            return os.path.join(self.output_dir, out_dir, names[0])
         if len(names) == 2:
-            return os.path.join(self.output_dir, dir, names[0], names[1])
-        return os.path.join(self.output_dir, dir, names[0], names[1], names[2])
+            return os.path.join(self.output_dir, out_dir, names[0], names[1])
+        return os.path.join(self.output_dir, out_dir, names[0], names[1], names[2])
 
     def list_fmw_services(self, repo_name, fmw_name):
         return self.job.list_fmw_services(repo_name, fmw_name)
@@ -70,9 +74,7 @@ class FMEServerAPIJob:
         return self.job.list_fmw_resources(repo_name, fmw_name)
 
     def fmw_resource_exists(self, repo_name, fmw_name, resource_name):
-        get_prop_func = lambda repo_name, fmw_name, resource_name: self.job.get_fmw_resources_info(repo_name, fmw_name,
-                                                                                                   resource_name)
-        return self.prop_exists([repo_name, fmw_name, resource_name], get_prop_func)
+        return self.prop_exists([repo_name, fmw_name, resource_name], self.job.get_fmw_resources_info)
 
     def list_fmw_parameters(self, repo_name, fmw_name):
         return self.job.list_fmw_parameters(repo_name, fmw_name)
@@ -80,3 +82,24 @@ class FMEServerAPIJob:
     def get_fmw_parameters_pub_info(self, repo_name, fmw_name, pub_name):
         """Retrieves a published parameter of a workspace."""
         return self.job.get_fmw_parameters_pub_info(repo_name, fmw_name, pub_name)
+
+    def download_prop(self, names, out_dir, overwrite, download_prop_act):
+        prop_file = self.populate_prop_file_name(names, out_dir)
+        if not overwrite and os.path.exists(prop_file):
+            raise APIException("File already exists: %s" % prop_file)
+        out_dir = os.path.dirname(prop_file)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        response = download_prop_act(*names)
+        Path(os.path.dirname(prop_file)).mkdir(parents=True, exist_ok=True)
+        with open(prop_file, 'wb') as f:
+            f.write(response["response"].content)
+        return response
+
+    def download_fmw(self, repo_name, fmw_name, out_dir, overwrite=False):
+        return self.download_prop([repo_name, fmw_name], out_dir, overwrite, self.job.download_fmw)
+
+    def download_repo(self, repo_name, out_dir):
+        fmw_list = self.list_repo_fmws(repo_name)
+        for fmw in fmw_list:
+            self.download_fmw(repo_name, fmw["name"], out_dir)

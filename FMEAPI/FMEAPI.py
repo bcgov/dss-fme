@@ -1,4 +1,3 @@
-import json
 import os
 from FMEAPI.CallAPIGet import CallAPIGET
 from FMEAPI.CallAPIPost import CallAPIPOST
