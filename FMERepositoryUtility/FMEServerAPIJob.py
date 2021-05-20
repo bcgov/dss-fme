@@ -8,12 +8,12 @@ from FMEAPI.ApiException import APIException
 
 class FMEServerAPIJob:
 
-    def __init__(self, secret_config_name, job_config_name):
+    def __init__(self, secret_config_name, job_config_name, server_name, token):
         with open(secret_config_name) as secret_config_json:
             self.secret_config = json.load(secret_config_json)
         with open(job_config_name) as job_config_json:
             self.job_config = json.load(job_config_json)
-        self.job = FMEAPI.FmeApis(self.job_config["fme_server"], self.secret_config["token"])
+        self.job = FMEAPI.FmeApis(server_name, token)
         self.output_dir = self.job_config["output_dir"]
         ok = self.job.check_health()
         if not ok:

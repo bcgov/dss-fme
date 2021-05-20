@@ -22,7 +22,7 @@ class FMEServerJob:
         self.debug = self.app_config["run_mode"] == "debug"
         self.log = AppLogger(os.path.join(self.app_config["log_dir"], "log.txt"), True, True)
         self.result = result
-        self.api = FMEServerAPIJob(secret_config_name, job_config_name)
+        self.api = FMEServerAPIJob(secret_config_name, job_config_name, "fme_server")
         self.prop_find = PropFind(self.job_config["match"])
         self.fmw_found_list = list()
 
