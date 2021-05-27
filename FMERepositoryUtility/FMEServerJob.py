@@ -22,7 +22,8 @@ class FMEServerJob:
         self.debug = self.app_config["run_mode"] == "debug"
         self.log = AppLogger(os.path.join(self.app_config["log_dir"], "log.txt"), True, True)
         self.result = result
-        self.api = FMEServerAPIJob(secret_config_name, job_config_name, "fme_server")
+        self.api = FMEServerAPIJob(secret_config_name, job_config_name, self.job_config["fme_server"],
+                                   self.secret_config["token"])
         self.prop_find = PropFind(self.job_config["match"])
         self.fmw_found_list = list()
 
@@ -30,6 +31,9 @@ class FMEServerJob:
         pass
 
     def do_fmw_job(self, repo, fmw):
+        pass
+
+    def skip_fmw_job(self, repo, fmw):
         pass
 
     def execute(self):
@@ -47,6 +51,7 @@ class FMEServerJob:
                 for fmw in fmw_list:
                     fmw_filter = FMWFilter(self.secret_config_name, self.job_config_name, repo["name"], fmw["name"])
                     if not fmw_filter.execute():
+                        self.skip_fmw_job(repo, fmw)
                         continue
                     self.do_fmw_job(repo, fmw)
         except APIException as e:
