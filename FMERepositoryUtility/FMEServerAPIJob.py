@@ -103,3 +103,18 @@ class FMEServerAPIJob:
         fmw_list = self.list_repo_fmws(repo_name)
         for fmw in fmw_list:
             self.download_fmw(repo_name, fmw["name"], out_dir)
+
+    def get_fmw_source_dataset(self, repo_name, fmw_name, dataset_dir):
+        return self.job.get_fmw_dataset(repo_name, fmw_name, dataset_dir)
+
+    def get_fmw_dataset_info(self, repo_name, fmw_name, dataset_dir, dataset_name):
+        return self.job.get_fmw_dataset_info(repo_name, fmw_name, dataset_dir, dataset_name)
+
+    def list_fmw_datasets_features(self, repo_name, fmw_name, dataset_dir, dataset_name):
+        return self.job.list_fmw_datasets_features(repo_name, fmw_name, dataset_dir, dataset_name)
+
+    def get_fmw_datasets_feature_info(self, repo_name, fmw_name, dataset_dir, dataset_name, feature_name):
+        return self.job.get_fmw_datasets_feature_info(repo_name, fmw_name, dataset_dir, dataset_name, feature_name)
+
+    def upload_fmw(self, repo_name, fmw_name, file):
+        return self.job.upload_fmw(repo_name, fmw_name, file)

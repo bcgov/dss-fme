@@ -53,30 +53,34 @@ class FmeApis:
         result["repositoryName"] = repo_name
         return result
 
-    def get_fmw_datasets_info(self, repo_name, fmw_name, dataset_dir, dataset_name):
+    def get_fmw_dataset_info(self, repo_name, fmw_name, dataset_dir, dataset_name):
         """Retrieves information about a dataset associated with a repository item."""
         dataset_info = self.create_api_caller().call_api("get_fmw_datasets_info",
                                                          [repo_name, fmw_name, dataset_dir, dataset_name])
-        return dataset_info
+        return dataset_info["text"]
 
     def list_fmw_datasets_features(self, repo_name, fmw_name, dataset_dir, dataset_name):
         """Retrieves the feature types of a dataset associated with a repository item."""
         feature_list = self.create_api_caller().call_api("list_fmw_datasets_features",
                                                          [repo_name, fmw_name, dataset_dir, dataset_name])
-        return feature_list
+        return feature_list["text"]
 
     def get_fmw_datasets_feature_info(self, repo_name, fmw_name, dataset_dir, dataset_name, feature_name):
         """Retrieves information about a feature type of a dataset that is associated with a repository item."""
         feature_info = self.create_api_caller().call_api("get_fmw_datasets_feature_info",
                                                          [repo_name, fmw_name, dataset_dir,
                                                           dataset_name, feature_name])
-        return feature_info
+        return feature_info["text"]
+
+    def get_fmw_dataset(self, repo_name, fmw_name, dataset_dir):
+        """Retrieves a list of datasets associated with a repository item with given direction."""
+        result = self.create_api_caller().call_api("list_fmw_datasets", [repo_name, fmw_name, dataset_dir])
+        return result["text"]
 
     def get_fmw_datasets(self, repo_name, fmw_name):
         """Retrieves a list of datasets associated with a repository item."""
-        src_dataset_list = self.create_api_caller().call_api("list_fmw_datasets", [repo_name, fmw_name, "source"])
-        dest_dataset_list = self.create_api_caller().call_api("list_fmw_datasets",
-                                                              [repo_name, fmw_name, "destination"])
+        src_dataset_list = self.get_fmw_dataset(repo_name, fmw_name, "source")
+        dest_dataset_list = self.get_fmw_dataset(repo_name, fmw_name, "destination")
         return {"source_datasets": src_dataset_list, "destination_datasets": dest_dataset_list}
 
     def list_fmw_parameters(self, repo_name, fmw_name):

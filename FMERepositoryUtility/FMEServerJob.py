@@ -4,7 +4,7 @@ from datetime import datetime
 from FMEAPI.ApiException import APIException
 from FMERepositoryUtility.FMEServerAPIJob import FMEServerAPIJob
 from FMERepositoryUtility.FMWFilter import FMWFilter
-from FMERepositoryUtility.PropFind import PropFind
+# from FMERepositoryUtility.PropFind import PropFind
 from FileLogger.Logger import AppLogger
 
 
@@ -24,8 +24,8 @@ class FMEServerJob:
         self.result = result
         self.api = FMEServerAPIJob(secret_config_name, job_config_name, self.job_config["fme_server"],
                                    self.secret_config["token"])
-        self.prop_find = PropFind(self.job_config["match"])
-        self.fmw_found_list = list()
+        # self.prop_find = PropFind(self.job_config["match"])
+        # self.fmw_found_list = list()
 
     def do_repo_job(self, repo):
         pass
