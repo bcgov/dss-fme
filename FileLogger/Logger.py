@@ -18,6 +18,9 @@ class AppLogger:
         #     text = obj
         print("%s" % obj)
         if self.save_file:
+            out_dir = os.path.dirname(self.file_name)
+            if not os.path.exists(out_dir):
+                os.makedirs(out_dir)
             f = open(self.file_name, "a")
             f.write("%s" % obj)
             f.write("\n")

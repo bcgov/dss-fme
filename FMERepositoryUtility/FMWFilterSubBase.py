@@ -6,6 +6,7 @@ class FMWFilterSubBase:
     def __init__(self, job_config_name, filter_prop_key, rule, api_method=None):
         with open(job_config_name) as job_config_json:
             self.job_config = json.load(job_config_json)
+        self.enabled_key = "enable"
         self.filter_rule_key = "job_filter_rule"
         self.filter_prop_key = filter_prop_key
         self.rule = rule
@@ -18,9 +19,9 @@ class FMWFilterSubBase:
         if not props:
             return result
         for prop in props:
-            if prop[self.filter_rule_key] == self.rule:
+            if prop[self.enabled_key] and prop[self.filter_rule_key] == self.rule:
                 for key in prop.keys():
-                    if key != self.filter_rule_key:
+                    if key not in [self.filter_rule_key, self.enabled_key]:
                         result[key] = prop[key]
         return result
 

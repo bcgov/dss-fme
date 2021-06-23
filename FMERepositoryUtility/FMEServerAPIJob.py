@@ -62,10 +62,10 @@ class FMEServerAPIJob:
         if len(names) == 0:
             return None
         if len(names) == 1:
-            return os.path.join(self.output_dir, out_dir, names[0])
+            return os.path.join(out_dir, names[0])
         if len(names) == 2:
-            return os.path.join(self.output_dir, out_dir, names[0], names[1])
-        return os.path.join(self.output_dir, out_dir, names[0], names[1], names[2])
+            return os.path.join(out_dir, names[0], names[1])
+        return os.path.join(out_dir, names[0], names[1], names[2])
 
     def list_fmw_services(self, repo_name, fmw_name):
         return self.job.list_fmw_services(repo_name, fmw_name)
@@ -97,7 +97,8 @@ class FMEServerAPIJob:
         return response
 
     def download_fmw(self, repo_name, fmw_name, out_dir, overwrite=False):
-        return self.download_prop([repo_name, fmw_name], out_dir, overwrite, self.job.download_fmw)
+        names = (repo_name, fmw_name)
+        return self.download_prop(names, out_dir, overwrite, self.job.download_fmw)
 
     def download_repo(self, repo_name, out_dir):
         fmw_list = self.list_repo_fmws(repo_name)

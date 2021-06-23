@@ -4,3 +4,4 @@ from . import FMWRepositoryUtil
 from . import FMWCompare
 from . import RepoCompare
 from . import ObjectCompare
+from . import XMLTextUtility

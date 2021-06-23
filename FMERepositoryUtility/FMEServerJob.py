@@ -4,13 +4,13 @@ from datetime import datetime
 from FMEAPI.ApiException import APIException
 from FMERepositoryUtility.FMEServerAPIJob import FMEServerAPIJob
 from FMERepositoryUtility.FMWFilter import FMWFilter
-# from FMERepositoryUtility.PropFind import PropFind
 from FileLogger.Logger import AppLogger
 
 
 class FMEServerJob:
 
-    def __init__(self, app_config_name, secret_config_name, job_config_name, result=None):
+    def __init__(self, app_config_name, secret_config_name, job_config_name):
+        self.app_config_name = app_config_name
         self.secret_config_name = secret_config_name
         self.job_config_name = job_config_name
         with open(app_config_name) as app_config_json:
@@ -21,11 +21,16 @@ class FMEServerJob:
             self.job_config = json.load(job_config_json)
         self.debug = self.app_config["run_mode"] == "debug"
         self.log = AppLogger(os.path.join(self.app_config["log_dir"], "log.txt"), True, True)
-        self.result = result
         self.api = FMEServerAPIJob(secret_config_name, job_config_name, self.job_config["fme_server"],
                                    self.secret_config["token"])
-        # self.prop_find = PropFind(self.job_config["match"])
-        # self.fmw_found_list = list()
+        self.repo_filters = self.repo_filter_items()
+
+    def repo_filter_items(self):
+        result = list()
+        for item in self.job_config["filter_repo"]:
+            if item["enable"]:
+                result.append(item["name"])
+        return result
 
     def do_repo_job(self, repo):
         pass
@@ -42,9 +47,7 @@ class FMEServerJob:
             repos = self.api.list_repos()
             for repo in repos:
                 repo_name = repo["name"]
-                if repo_name not in self.job_config["repo_filter"].keys():
-                    continue
-                if self.job_config["repo_filter"][repo_name] != "1":
+                if repo_name not in self.repo_filters:
                     continue
                 self.do_repo_job(repo)
                 fmw_list = self.api.list_repo_fmws(repo_name)
