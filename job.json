@@ -1,0 +1,62 @@
+{
+  "output_dir": "output",
+  "input_dir": "output",
+  "download_overwrite": true,
+  "upgrade_dir": "upgrade",
+  "fmw_dir": "fmw",
+  "fme_server": "gienah.dmz",
+  "filter_repo": [
+    {
+      "name": "BCGW_REP_OTHER",
+      "enable": true
+    },
+    {
+      "name": "BCGW_CHILD",
+      "enable": true
+    },
+    {
+      "name": "BCGW_REP_ON_REQUEST",
+      "enable": true
+    },
+    {
+      "name": "BCGW_SCHEDULED",
+      "enable": true
+    },
+    {
+      "name": "FWA_SUPPORT",
+      "enable": true
+    }
+  ],
+  "filter_fmw_name": [
+    {
+      "name": "acat_report_point_env_odb_bcgw",
+      "job_filter_rule": "include",
+      "job_filter_method": "text",
+      "enable": false
+    },
+    {
+      "name": "^gsr_",
+      "job_filter_rule": "exclude",
+      "job_filter_method": "regex",
+      "enable": true
+    }
+  ],
+  "filter_fmw_prop": [
+    {
+      "DEST_SCHEMA": {
+        "name": "DEST_SCHEMA"
+      },
+      "job_filter_rule": "include",
+      "enable": true
+    },
+    {
+      "DEST_DB_ENV_KEY": {
+        "defaultValue": "DLV"
+      },
+      "job_filter_rule": "include",
+      "enable": true
+    }
+  ]
+}
+
+

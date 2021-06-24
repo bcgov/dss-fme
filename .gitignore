@@ -1,0 +1,15 @@
+*.pyc
+64bit
+lib/
+!lib\requirements.txt
+junk.py
+output
+.idea/
+lib64/
+/source.repo.txt
+/dest.repo.txt
+*.fmw
+fmws/
+/secret.json
+log.txt
+upgrade
