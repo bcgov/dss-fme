@@ -3,12 +3,12 @@
 ### Set up FME desktop
 
 Assumption(s):
-FME floating license is granted via a licensing server
-Host machine has access to the above server
-User knows the value in for FME_LICENSE_SERVER_HOSTNAME (licensing server) and FME_EDITION_NAME
+- FME floating license is granted via a licensing server.
+- Host machine has access to the above server.
+- User knows the proper value for FME_LICENSE_SERVER_HOSTNAME (licensing server) and FME_EDITION_NAME.
 
 Additional note(s):
-Made use of a docker base image as installing fme desktop takes much time and not convenient for dev work.
+- Made use of a docker base image as installing fme desktop takes much time and not convenient for dev work.
 
 Step(s):
 
@@ -28,4 +28,4 @@ https://s3-us-west-2.amazonaws.com/safe-software-container-deployments/index.htm
 https://docs.safe.com/fme/2019.0/html/FME_Server_Documentation/AdminGuide/Deploying-with-Docker-Compose.htm#
 
 Additional note(s):
-k8s-quickstart.sh and docker-compose.yaml has not been tested.
+- k8s-quickstart.sh and docker-compose.yaml has not been tested.
