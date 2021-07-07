@@ -1,0 +1,16 @@
+FROM ubuntu:18.04
+
+ENV UBUNTU_VERSION=18.04
+# frontent must be disabled during install
+ENV DEBIAN_FRONTEND=noninteractive
+ENV FME_MAJOR=2020
+ENV FME_MINOR=2.4.0.20825
+
+RUN apt-get update && \
+    apt-get -y install curl
+
+RUN curl --fail --location --show-error \
+    https://downloads.safe.com/fme/${FME_MAJOR}/fme-desktop-${FME_MAJOR}_${FME_MAJOR}.${FME_MINOR}~ubuntu.${UBUNTU_VERSION}_amd64.deb \
+    --output /tmp/fme_install.deb && \
+    apt-get install -y /tmp/fme_install.deb && \
+    rm /tmp/fme_install.deb && \
