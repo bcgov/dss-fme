@@ -1,4 +1,6 @@
 from . import FMEServerJob
+from . import FMWCollection
+from . import FMWCollectionServer
 from . import FMWParameterUtil
 from . import FMWRepositoryUtil
 from . import FMWCompare

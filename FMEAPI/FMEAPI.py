@@ -1,4 +1,6 @@
 import os
+from urllib.parse import quote
+
 from FMEAPI.CallAPIGet import CallAPIGET
 from FMEAPI.CallAPIPost import CallAPIPOST
 from FMEAPI.ApiException import APIException
@@ -39,6 +41,17 @@ class FmeApis:
         """Retrieves information about a repository."""
         info = self.create_api_caller().call_api("get_repo_info", [repo_name])
         return info
+
+    def create_repo(self, repo_name, description=None):
+        """create a repository."""
+        """Adds a repository to the FME Server instance."""
+        # params = quote(f'description={description}&name={repo_name}')
+        params = f'description={description}&name={repo_name}'
+        headers = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
+        # response = self.create_api_caller("POST").call_api("create_repo", None, [repo_name], [201], headers)
+        # headers = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
+        response = self.create_api_caller("POST").call_api("create_repo", None, [201], headers=headers, body=params)
+        return response
 
     def list_repo_fmws(self, repo_name):
         """Retrieves a list of items in the repository. """
@@ -143,12 +156,6 @@ class FmeApis:
                                                            services)
         return response
 
-    def create_repo(self, repo):
-        """Adds a repository to the FME Server instance."""
-        headers = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
-        response = self.create_api_caller("POST").call_api("create_repo", None, None, headers=headers, body=repo)
-        return response
-
     def delete_repo(self, repo_name):
         """Removes a repository and all of its contents."""
         response = self.create_api_caller("DELETE").call_api("delete_repo", [repo_name])
@@ -165,7 +172,8 @@ class FmeApis:
         if not os.path.exists(file):
             raise APIException("File not found: %s" % file)
         bin_file = {'file': open(file, 'rb')}
-        headers = {"Content-Disposition": "attachment; filename=\"%s\"" % fmw_name, "Accept": "application/json"}
+        headers = {"Content-Disposition": "attachment; filename=\"%s\"" % fmw_name,
+                   "Accept": "application/json; charset=UTF-8"}
         response = self.create_api_caller("POST").call_api_upload("create_fmw", bin_file, [repo_name], [200, 201],
                                                                   headers)
         return response

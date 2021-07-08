@@ -6,6 +6,7 @@ class APIConfig:
             "health_check": "healthcheck?textResponse=false",
             "list_repos": "repositories?limit=-1&offset=-1&fmetoken=",
             "get_repo_info": "repositories/%s?fmetoken=",
+            "create_repo": "repositories/?fmetoken=",
             "list_repo_fmws": "repositories/%s/items?fmetoken=",
             "get_repo_fmw": "repositories/%s/items/%s?fmetoken=",
             "list_fmw_datasets": "repositories/%s/items/%s/datasets/%s?fmetoken=",

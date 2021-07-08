@@ -23,6 +23,10 @@ class FMEServerAPIJob:
         repo_list = self.job.list_repos()
         return repo_list
 
+    def test_token(self):
+        repo_list = self.job.list_repos()
+        return repo_list is not None
+
     @staticmethod
     def get_fmw_props(api_method, repo_name, fmw_name):
         try:
@@ -51,6 +55,9 @@ class FMEServerAPIJob:
     def repo_exists(self, repo_name):
         return self.prop_exists([repo_name], self.job.get_repo_info)
 
+    def create_repo(self, repo_name, description):
+        return self.job.create_repo(repo_name, description)
+
     def fmw_exists(self, repo_name, fmw_name):
         return self.prop_exists([repo_name, fmw_name], self.job.get_repo_fmw)
 
@@ -58,7 +65,8 @@ class FMEServerAPIJob:
         fmw = self.job.get_repo_fmw(repo_name, fmw_name)
         return fmw
 
-    def populate_prop_file_name(self, names, out_dir):
+    @staticmethod
+    def populate_prop_file_name(names, out_dir):
         if len(names) == 0:
             return None
         if len(names) == 1:
@@ -94,11 +102,35 @@ class FMEServerAPIJob:
         Path(os.path.dirname(prop_file)).mkdir(parents=True, exist_ok=True)
         with open(prop_file, 'wb') as f:
             f.write(response["response"].content)
+        response["download_file"] = prop_file
         return response
 
-    def download_fmw(self, repo_name, fmw_name, out_dir, overwrite=False):
-        names = (repo_name, fmw_name)
-        return self.download_prop(names, out_dir, overwrite, self.job.download_fmw)
+    @staticmethod
+    def download_features(names, file_name, download_act):
+        features = download_act(*names)
+        if features and len(features) > 0:
+            with open(file_name, 'w') as f:
+                json.dump(features, f)
+
+    @staticmethod
+    def upload_features(names, file_name, upload_act):
+        if not os.path.exists(file_name):
+            return
+        with open(file_name) as file_json:
+            features = json.load(file_json)
+        upload_act(*names, features)
+
+    def download_fmw(self, repo_name, fmw_name, out_dir, overwrite=False, downoad_service=False,
+                     download_resource=False):
+        result = self.download_prop((repo_name, fmw_name), out_dir, overwrite, self.job.download_fmw)
+        if downoad_service:
+            self.download_features((repo_name, fmw_name), f'{result["download_file"]}.service.json',
+                                   self.job.list_fmw_services)
+        if download_resource:
+            res = self.job.list_fmw_resources(repo_name, fmw_name)
+            if len(res) > 0:
+                result["log"] = f'Resource file skipped: {result["download_file"]}'
+        return result
 
     def download_repo(self, repo_name, out_dir):
         fmw_list = self.list_repo_fmws(repo_name)
@@ -117,5 +149,10 @@ class FMEServerAPIJob:
     def get_fmw_datasets_feature_info(self, repo_name, fmw_name, dataset_dir, dataset_name, feature_name):
         return self.job.get_fmw_datasets_feature_info(repo_name, fmw_name, dataset_dir, dataset_name, feature_name)
 
-    def upload_fmw(self, repo_name, fmw_name, file):
-        return self.job.upload_fmw(repo_name, fmw_name, file)
+    def upload_fmw(self, repo_name, fmw_name, file, overwrite=False):
+        if overwrite and self.job.get_repo_fmw(repo_name, fmw_name):
+            self.job.delete_fmw(repo_name, fmw_name)
+        result = self.job.upload_fmw(repo_name, fmw_name, file)
+        self.upload_features((repo_name, fmw_name), f'{result["download_file"]}.service.json',
+                             self.job.create_fmw_services)
+        return result
