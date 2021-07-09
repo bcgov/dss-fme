@@ -2,6 +2,7 @@ import json
 import os.path
 import os
 import re
+import shutil
 
 from FMWFile import FMWFile
 from FileLogger.Logger import AppLogger
@@ -63,7 +64,7 @@ class UpgradeFMWFile:
         result = fix(text, out_text0, changed0)
         return result[1], result[2]
 
-    def execute(self, fmw_file_name):
+    def execute(self, fmw_file_name, fmw_file_name_upgrade):
         fmw_file = FMWFile(fmw_file_name)
         fmw_file.load()
         include_cri = [fmw_file.line_search_cri('FEATURE_TYPE_NAME_QUALIFIER=""'),
@@ -79,14 +80,13 @@ class UpgradeFMWFile:
         if not result[1]:
             return
         out_text = result[0]
-        upgrade_fmw_name = fmw_file_name.replace(f'{self.job_config["input_dir"]}\\',
-                                                 f'{self.job_config["upgrade_dir"]}\\')
-        out_dir = os.path.dirname(upgrade_fmw_name)
+        out_dir = os.path.dirname(fmw_file_name_upgrade)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
-        self.log.write_line(f"Upgrading {upgrade_fmw_name} ...")
-        f = open(upgrade_fmw_name, "w")
+        self.log.write_line(f"Upgrading {fmw_file_name} ...")
+        f = open(fmw_file_name_upgrade, "w")
         try:
             f.write(out_text)
         finally:
             f.close()
+        shutil.copyfile(f'{fmw_file_name}.service.json', f'{fmw_file_name_upgrade}.service.json')

@@ -1,10 +1,12 @@
 {
   "output_dir": "output",
-  "input_dir": "output",
   "download_overwrite": true,
+  "download_service": "true",
+  "download_resource": "true",
   "upgrade_dir": "upgrade",
   "fmw_dir": "fmw",
   "fme_server": "gienah.dmz",
+  "upgrade_output_repo": "GARY_TEST_REPO",
   "filter_repo": [
     {
       "name": "BCGW_REP_OTHER",
@@ -29,15 +31,35 @@
   ],
   "filter_fmw_name": [
     {
-      "name": "acat_report_point_env_odb_bcgw",
+      "acat_report_point_env_odb_bcgw": {
+        "name": "acat_report_point_env_odb_bcgw",
+        "method": "text"
+      },
       "job_filter_rule": "include",
-      "job_filter_method": "text",
       "enable": false
     },
     {
-      "name": "^gsr_",
+      "upgrade": {
+        "name": "_upgrade.",
+        "method": "text"
+      },
       "job_filter_rule": "exclude",
-      "job_filter_method": "regex",
+      "enable": true
+    },
+    {
+      "test": {
+        "name": "uploadtest.",
+        "method": "text"
+      },
+      "job_filter_rule": "exclude",
+      "enable": true
+    },
+    {
+      "gsr": {
+        "name": "^gsr_",
+        "method": "regex"
+      },
+      "job_filter_rule": "exclude",
       "enable": true
     }
   ],
