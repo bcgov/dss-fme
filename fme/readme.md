@@ -67,6 +67,7 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
 Step(s):
+Download fme-desktop-2020.2.4-b20825-win-x64.msi from https://www.safe.com/support/downloads/#past-versions
 
 ```
 export FME_LICENSE_SERVER_HOSTNAME=<FME_LICENSE_SERVER_HOSTNAME> FME_EDITION_NAME=<FME_EDITION_NAME> && vagrant up .
