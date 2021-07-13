@@ -4,7 +4,7 @@
 set -o errexit
 
 readonly REQUIRED_ENV_VARS=(
-	"FME_LICENSE_SERVER_HOSTNAME"
+	"FME_LICENSING_SERVER"
 	"FME_EDITION_NAME")
 
 
@@ -15,7 +15,7 @@ for evar in ${REQUIRED_ENV_VARS[@]}; do
   fi
 done
 
-./fmelicensingassistant --floating $FME_LICENSE_SERVER_HOSTNAME $FME_EDITION_NAME
+./fmelicensingassistant --floating $FME_LICENSING_SERVER $FME_EDITION_NAME
 echo "Floating license set successfully."
 
 exec "$@"

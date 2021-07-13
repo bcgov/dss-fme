@@ -5,7 +5,7 @@
 Assumption(s):
 - FME floating license is granted via a licensing server.
 - Host machine has access to the above server.
-- User knows the proper value for FME_LICENSE_SERVER_HOSTNAME (licensing server) and FME_EDITION_NAME.
+- User knows the proper value for FME_LICENSING_SERVER and FME_EDITION_NAME.
 
 Additional note(s):
 - Made use of a docker base image as installing fme desktop takes much time and not convenient for dev work.
@@ -17,7 +17,7 @@ docker build --tag fme-desktop-base -f Dockerfile_base .
 
 docker build --tag fme-desktop .
 
-docker run --network=host -e FME_LICENSE_SERVER_HOSTNAME=<FME_LICENSE_SERVER_HOSTNAME> -e FME_EDITION_NAME=<FME_EDITION_NAME> --rm -it fme-desktop:latest bash 
+docker run --network=host -e FME_LICENSING_SERVER=<FME_LICENSING_SERVER> -e FME_EDITION_NAME=<FME_EDITION_NAME> --rm -it fme-desktop:latest bash 
 ```
 
 ### Set up FME server
@@ -49,7 +49,7 @@ Assumption(s):
 - Host machine has virtualBox, Vagrant, ansible and [pywinrm package](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html) installed.
 - FME floating license is granted via a licensing server.
 - Host machine has access to the above server.
-- User knows the proper value for FME_LICENSE_SERVER_HOSTNAME (licensing server) and FME_EDITION_NAME.
+- User knows the proper value for FME_LICENSING_SERVER and FME_EDITION_NAME.
 
 Additional note(s):
 - [Base vagrant box](https://app.vagrantup.com/mwrock/boxes/Windows2016) can take some time to download
@@ -68,6 +68,6 @@ Step(s): \
 Download fme-desktop-2020.2.4-b20825-win-x64.msi from [here](https://www.safe.com/support/downloads/#past-versions) and run
 
 ```
-export FME_LICENSE_SERVER_HOSTNAME=<FME_LICENSE_SERVER_HOSTNAME> FME_EDITION_NAME=<FME_EDITION_NAME> && vagrant up .
+export FME_LICENSING_SERVER=<FME_LICENSING_SERVER> FME_EDITION_NAME=<FME_EDITION_NAME> && vagrant up .
 
 ```
