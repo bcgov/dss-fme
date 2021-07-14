@@ -23,6 +23,8 @@
         chdir: C:\Program Files\FME
       register: licensing_result
 
+    # TODO: licensing_result being blank means it ran OK.
+    # Otherwise throw an error so playbook won't continue.
     - name: Debug
       debug:
         var: licensing_result.stderr_lines
