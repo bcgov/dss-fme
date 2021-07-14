@@ -68,6 +68,6 @@ Step(s): \
 Download fme-desktop-2020.2.4-b20825-win-x64.msi from [here](https://www.safe.com/support/downloads/#past-versions) and run
 
 ```
-export FME_LICENSING_SERVER=<FME_LICENSING_SERVER> FME_EDITION_NAME=<FME_EDITION_NAME> && vagrant up .
+export FME_LICENSING_SERVER=<FME_LICENSING_SERVER> FME_EDITION_NAME=<FME_EDITION_NAME> && vagrant up
 
 ```
