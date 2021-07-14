@@ -86,4 +86,4 @@ So project folder will look like:
     └── RMMemoryHotfix.ps1
 ```
 
-3. Prep ansible-vars.yaml w/ correct values and run `vagrant up`.
+2. Prep ansible-vars.yaml w/ correct values and run `vagrant up`.
