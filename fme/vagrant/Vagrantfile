@@ -14,8 +14,6 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 5985, host: 5985, id: "winrm_http", auto_correct: true
   config.vm.network :forwarded_port, guest: 5986, host: 5986, id: "winrm_https", auto_correct: true
 
-  config.vm.provision "shell", path: "scripts/UpgradePowershell.ps1"
-  config.vm.provision "shell", path: "scripts/ReverseAccessControl.ps1"
   config.vm.provision "shell", path: "scripts/RMMemoryHotfix.ps1"
   config.vm.provision "shell", path: "scripts/ConfigureRM.ps1"
   config.vm.provision "shell", path: "scripts/InstallFMEDesktop.cmd", privileged: true, env: {"FME_LICENSING_SERVER" => ENV['FME_LICENSING_SERVER'], "FME_EDITION_NAME" => ENV['FME_EDITION_NAME']}
