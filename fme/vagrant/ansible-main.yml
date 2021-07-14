@@ -28,3 +28,20 @@
     - name: Debug
       debug:
         var: licensing_result.stderr_lines
+
+    - name: Install dependency for ArcGIS Pro
+      ansible.windows.win_package:
+        path: C:\vagrant\resources\ndp48-web.exe
+        arguments: /q /norestart /log "C:\Temp\ndp48-web.log"
+        state: present
+      register: installing_dependency
+
+    - name: Reboot if required
+      ansible.windows.win_reboot:
+      when: installing_dependency.reboot_required
+
+    - name: Install ArcGIS Pro
+      ansible.windows.win_package:
+        path: C:\vagrant\resources\ArcGISPro.msi
+        arguments: /qb ALLUSERS=1 ESRI_LICENSE_HOST="{{ESRI_LICENSING_SERVER}}" SOFTWARE_CLASS=Professional AUTHORIZATION_TYPE=CONCURRENT_USE
+        state: present

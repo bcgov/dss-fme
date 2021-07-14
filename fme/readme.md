@@ -62,15 +62,20 @@ objc[98536]: +[__NSPlaceholderDate initialize] may have been in progress in anot
 the workaround is to
 ```
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
-```
 
 Step(s): \
 
 0. Download the following:
 - [fme-desktop-2020.2.4-b20825-win-x64.msi](https://www.safe.com/support/downloads/#past-versions)
+- [ndp48-web.exe](https://dotnet.microsoft.com/download/dotnet-framework/net48) (.NET framework 4.8 as dependency for ArcGISPro2.6)
+- [ArcGISPro.msi](https://pro.arcgis.com/en/pro-app/latest/get-started/install-and-sign-in-to-arcgis-pro.htm) (version2.6)
+- [ArcGISPro.cab](https://pro.arcgis.com/en/pro-app/latest/get-started/install-and-sign-in-to-arcgis-pro.htm) (version2.6)
 
 1. Prep the resources folder so it contains files name exactly as follows.
+- ArcGISPro.cab
+- ArcGISPro.msi
 - fme-desktop-2020.2.4-b20825-win-x64.msi
+- ndp48-web.exe
 
 So project folder will look like:
 ```
@@ -80,7 +85,10 @@ So project folder will look like:
 ├── ansible-main.yml
 ├── ansible-vars.yml
 ├── resources
-│   └── fme-desktop-2020.2.4-b20825-win-x64.msi
+│   ├── ArcGISPro.cab
+│   ├── ArcGISPro.msi
+│   ├── fme-desktop-2020.2.4-b20825-win-x64.msi
+│   └── ndp48-web.exe
 └── scripts
     ├── ConfigureRM.ps1
     └── RMMemoryHotfix.ps1
