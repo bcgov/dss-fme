@@ -62,8 +62,9 @@ objc[98536]: +[__NSPlaceholderDate initialize] may have been in progress in anot
 the workaround is to
 ```
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+```
 
-Step(s): \
+Step(s):
 
 0. Download the following:
 - [fme-desktop-2020.2.4-b20825-win-x64.msi](https://www.safe.com/support/downloads/#past-versions)
