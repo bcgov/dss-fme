@@ -1,0 +1,4 @@
+# Vars for running ansible playbooks
+---
+FME_LICENSING_SERVER: test
+FME_EDITION_NAME: test

@@ -16,10 +16,15 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", path: "scripts/RMMemoryHotfix.ps1"
   config.vm.provision "shell", path: "scripts/ConfigureRM.ps1"
-  config.vm.provision "shell", path: "scripts/InstallFMEDesktop.cmd", privileged: true, env: {"FME_LICENSING_SERVER" => ENV['FME_LICENSING_SERVER'], "FME_EDITION_NAME" => ENV['FME_EDITION_NAME']}
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "5000"
     vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "ansible-main.yml"
+    ansible.inventory_path = "ansible-inventory"
+    ansible.verbose = "-vvv"
   end
 end

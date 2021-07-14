@@ -1,0 +1,28 @@
+# Set up FME Desktop and their dependencies
+---
+  - hosts: all
+    gather_facts: no
+    vars_files:
+      - ansible-vars.yml
+
+    tasks:
+    - name: Create Temp dir
+      ansible.windows.win_file:
+        path: C:\Temp
+        state: directory
+        
+    - name: Install FME Desktop
+      ansible.windows.win_package:
+        path: C:\vagrant\resources\fme-desktop-2020.2.4-b20825-win-x64.msi
+        arguments: /qb /l*v "C:\Temp\fme-desktop-2020.2.4-b20825-win-x64-msi.log" INSTALLLEVEL=3 INSTALLDIR="C:\Program Files\FME" ENABLE_POST_INSTALL_TASKS=no INSTALL_PYTHON27=yes
+        state: present
+
+    - name: License FME Desktop
+      ansible.windows.win_command: .\fmelicensingassistant --floating "{{FME_LICENSING_SERVER}}" "{{FME_EDITION_NAME}}"
+      args:
+        chdir: C:\Program Files\FME
+      register: licensing_result
+
+    - name: Debug
+      debug:
+        var: licensing_result.stderr_lines

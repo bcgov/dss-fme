@@ -46,7 +46,7 @@ https://community.safe.com/s/article/geodatabase-formats-missing-greyed-out-or-h
 
 Assumption(s):
 - Host machine is linux-based.
-- Host machine has virtualBox, Vagrant, ansible and [pywinrm package](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html) installed.
+- Host machine has virtualBox, Vagrant, ansible, [ansible.windows](https://galaxy.ansible.com/ansible/windows) and [pywinrm package](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html) installed.
 - FME floating license is granted via a licensing server.
 - Host machine has access to the above server.
 - User knows the proper value for FME_LICENSING_SERVER and FME_EDITION_NAME.
@@ -65,9 +65,25 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
 Step(s): \
-Download fme-desktop-2020.2.4-b20825-win-x64.msi from [here](https://www.safe.com/support/downloads/#past-versions) and run
 
-```
-export FME_LICENSING_SERVER=<FME_LICENSING_SERVER> FME_EDITION_NAME=<FME_EDITION_NAME> && vagrant up
+0. Download the following:
+- [fme-desktop-2020.2.4-b20825-win-x64.msi](https://www.safe.com/support/downloads/#past-versions)
 
+1. Prep the resources folder so it contains files name exactly as follows.
+- fme-desktop-2020.2.4-b20825-win-x64.msi
+
+So project folder will look like:
 ```
+.
+├── Vagrantfile
+├── ansible-inventory
+├── ansible-main.yml
+├── ansible-vars.yml
+├── resources
+│   └── fme-desktop-2020.2.4-b20825-win-x64.msi
+└── scripts
+    ├── ConfigureRM.ps1
+    └── RMMemoryHotfix.ps1
+```
+
+3. Prep ansible-vars.yaml w/ correct values and run `vagrant up`.
