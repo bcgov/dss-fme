@@ -97,4 +97,4 @@ So project folder will look like:
 
 2. Prep ansible-vars.yaml w/ correct values and run `vagrant up`.
 
-3. Run `C:\Users\vagrant>fme.exe \\vboxsvr\vagrant\kirk_tester.fmw --KIRK_JOBID "393" --KIRK_JOBLABEL "ebc_voting_places_sp_staging_gdb_bcgw" --KIRK_DEST_DB_KEY_OVERRIDE "dlv"`.
+3. Run `fme.exe \\vboxsvr\vagrant\kirk_tester.fmw --KIRK_JOBID "393" --KIRK_JOBLABEL "ebc_voting_places_sp_staging_gdb_bcgw" --KIRK_DEST_DB_KEY_OVERRIDE "dlv"`.
